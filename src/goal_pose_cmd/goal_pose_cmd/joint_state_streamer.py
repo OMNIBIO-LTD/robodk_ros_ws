@@ -9,6 +9,9 @@ publish_rate  : float  – publishing frequency in Hz (default 50.0)
 topic         : str    – output topic name (default '/joint_states')
 joint_names   : str    – comma-separated joint names
                          (default 'joint_1,joint_2,joint_3,joint_4,joint_5,joint_6')
+joint_signs   : str    – comma-separated signs (+1 or -1) per joint, used to
+                         correct axis direction mismatches between RoboDK and
+                         the target simulator (default '1,1,1,1,1,1')
 """
 
 import math
@@ -31,11 +34,14 @@ class JointStateStreamer(Node):
             'joint_names',
             'joint_1,joint_2,joint_3,joint_4,joint_5,joint_6'
         )
+        self.declare_parameter('joint_signs', '-1,1,1,-1,1,-1')
 
         rate = self.get_parameter('publish_rate').get_parameter_value().double_value
         topic = self.get_parameter('topic').get_parameter_value().string_value
         names_str = self.get_parameter('joint_names').get_parameter_value().string_value
+        signs_str = self.get_parameter('joint_signs').get_parameter_value().string_value
         self.joint_names = [n.strip() for n in names_str.split(',')]
+        self.joint_signs = [float(s.strip()) for s in signs_str.split(',')]
 
         # --- RoboDK connection ---
         self.get_logger().info('Connecting to RoboDK...')
@@ -48,7 +54,7 @@ class JointStateStreamer(Node):
 
         self.get_logger().info(f'Connected to robot: {self.robot.Name()}')
 
-        # Validate DOF vs joint name count
+        # Validate DOF vs joint name / sign count
         dof = len(self.robot.Joints().list())
         if dof != len(self.joint_names):
             self.get_logger().warning(
@@ -56,6 +62,12 @@ class JointStateStreamer(Node):
                 f'Auto-generating names: joint_1 ... joint_{dof}'
             )
             self.joint_names = [f'joint_{i + 1}' for i in range(dof)]
+        if dof != len(self.joint_signs):
+            self.get_logger().warning(
+                f'joint_signs length ({len(self.joint_signs)}) != DOF ({dof}). '
+                f'Defaulting all signs to +1.'
+            )
+            self.joint_signs = [1.0] * dof
 
         # --- Publisher ---
         self.pub = self.create_publisher(JointState, topic, 10)
@@ -80,8 +92,12 @@ class JointStateStreamer(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = ''
         msg.name = self.joint_names
-        # RoboDK stores angles in degrees; ROS uses radians
-        msg.position = [math.radians(j) for j in joints_deg]
+        # RoboDK stores angles in degrees; ROS uses radians.
+        # Apply per-joint sign correction for axis direction mismatches.
+        msg.position = [
+            s * math.radians(j)
+            for j, s in zip(joints_deg, self.joint_signs)
+        ]
 
         self.pub.publish(msg)
 
