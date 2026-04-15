@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+"""
+ROS2 node that reads joint positions from a robot in RoboDK and publishes
+them as sensor_msgs/JointState.
+
+Parameters
+----------
+publish_rate  : float  – publishing frequency in Hz (default 50.0)
+topic         : str    – output topic name (default '/joint_states')
+joint_names   : str    – comma-separated joint names
+                         (default 'joint_1,joint_2,joint_3,joint_4,joint_5,joint_6')
+"""
+
+import math
+
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+
+from robodk.robolink import Robolink, ITEM_TYPE_ROBOT
+
+
+class JointStateStreamer(Node):
+    def __init__(self):
+        super().__init__('joint_state_streamer')
+
+        # --- Parameters ---
+        self.declare_parameter('publish_rate', 50.0)
+        self.declare_parameter('topic', '/joint_states')
+        self.declare_parameter(
+            'joint_names',
+            'joint_1,joint_2,joint_3,joint_4,joint_5,joint_6'
+        )
+
+        rate = self.get_parameter('publish_rate').get_parameter_value().double_value
+        topic = self.get_parameter('topic').get_parameter_value().string_value
+        names_str = self.get_parameter('joint_names').get_parameter_value().string_value
+        self.joint_names = [n.strip() for n in names_str.split(',')]
+
+        # --- RoboDK connection ---
+        self.get_logger().info('Connecting to RoboDK...')
+        self.RDK = Robolink()
+
+        self.robot = self.RDK.ItemUserPick('Select a robot', ITEM_TYPE_ROBOT)
+        if not self.robot.Valid():
+            self.get_logger().fatal('No robot selected or available in RoboDK')
+            raise RuntimeError('No robot selected or available in RoboDK')
+
+        self.get_logger().info(f'Connected to robot: {self.robot.Name()}')
+
+        # Validate DOF vs joint name count
+        dof = len(self.robot.Joints().list())
+        if dof != len(self.joint_names):
+            self.get_logger().warning(
+                f'Robot has {dof} DOF but {len(self.joint_names)} joint names were given. '
+                f'Auto-generating names: joint_1 ... joint_{dof}'
+            )
+            self.joint_names = [f'joint_{i + 1}' for i in range(dof)]
+
+        # --- Publisher ---
+        self.pub = self.create_publisher(JointState, topic, 10)
+
+        # --- Timer ---
+        self.create_timer(1.0 / rate, self._publish)
+
+        self.get_logger().info(
+            f'Publishing joint states on "{topic}" at {rate} Hz '
+            f'| joints: {self.joint_names}'
+        )
+
+    def _publish(self):
+        try:
+            # robot.Joints() returns a Mat; .list() gives a flat Python list in degrees
+            joints_deg = self.robot.Joints().list()
+        except Exception as e:
+            self.get_logger().error(f'Failed to read joints from RoboDK: {e}')
+            return
+
+        msg = JointState()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = ''
+        msg.name = self.joint_names
+        # RoboDK stores angles in degrees; ROS uses radians
+        msg.position = [math.radians(j) for j in joints_deg]
+
+        self.pub.publish(msg)
+
+        self.get_logger().debug(
+            'joints (deg): ' + '  '.join(f'{j:.2f}' for j in joints_deg)
+        )
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = JointStateStreamer()
+
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Shutting down joint_state_streamer...')
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
