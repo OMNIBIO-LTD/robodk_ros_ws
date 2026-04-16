@@ -1,3 +1,13 @@
+
+**Workspace Setup:**
+
+Before running any commands, build the workspace and source the setup script:
+
+```bash
+colcon build
+source install/setup.bash
+```
+
 **Usage Instructions:**
 
 - **Send goal to end-effector pose:**
