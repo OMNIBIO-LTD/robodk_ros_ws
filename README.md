@@ -1,7 +1,26 @@
-to send goal to ee pose: ros2 run goal_pose_cmd goal_pose_cmd_node
+**Usage Instructions:**
 
-to read end-effector pose: ros2 run goal_pose_cmd read_tcp_pose_node then ros2 topic echo /tcp_pose
+- **Send goal to end-effector pose:**
+	```bash
+	ros2 run goal_pose_cmd goal_pose_cmd_node
+	```
 
-to bridge isaacsim with robodk: ros2 run goal_pose_cmd joint_state_streamer (for this  you should import robot in isaacsim, and create a joint state subscriber)
+- **Read end-effector pose:**
 
- 
+NOTE: robot should already be imported in RoboDK and its frame should be set as active frame
+
+	```bash
+	ros2 run goal_pose_cmd read_tcp_pose_node
+	ros2 topic echo /tcp_pose
+	```
+
+- **Bridge Isaac Sim with RoboDK:**
+	```bash
+	ros2 run goal_pose_cmd joint_state_streamer
+	```
+	*Note: Import the robot in Isaac Sim and create a joint state subscriber using Action Graphs with the topic name `/joint_states`.*
+
+- **Sample URDF robot for Isaac Sim:**
+	```bash
+	~/robodk_ros_ws/src/kuka_robot_descriptions/kuka_quantec_support/urdf/kr240_r2900_2.urdf
+	```
