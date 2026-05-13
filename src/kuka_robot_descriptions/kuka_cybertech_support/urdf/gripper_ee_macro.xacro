@@ -69,7 +69,8 @@
       <parent link="${prefix}gripper_base_link"/>
       <child link="${prefix}gripper_1"/>
       <axis xyz="0.0 1.0 0.0"/>
-      <limit upper="0.09" lower="0.0" effort="100" velocity="100"/>
+      <limit upper="0.09" lower="0.0" effort="2000" velocity="0.2"/>
+      <dynamics damping="500.0" friction="200.0"/>
     </joint>
 
     <link name="${prefix}gripper_tcp"/>
