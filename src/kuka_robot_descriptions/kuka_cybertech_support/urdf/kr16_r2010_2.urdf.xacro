@@ -3,7 +3,7 @@
   <!-- Import macro files  -->
   <xacro:include filename="$(find kuka_cybertech_support)/urdf/kr16_r2010_2_macro.xacro"/>
   <xacro:include filename="$(find kuka_cybertech_support)/urdf/kr_cybertech_ros2_control_macro.xacro"/>
-  <xacro:include filename="$(find gripper_ee_description)/urdf/gripper_ee_macro.xacro"/>
+  <xacro:include filename="$(find kuka_cybertech_support)/urdf/gripper_ee_macro.xacro"/>
   <!-- Read additional arguments  -->
   <xacro:arg name="driver_version" default="eki_rsi"/>
   <xacro:arg name="mode" default="hardware"/>
