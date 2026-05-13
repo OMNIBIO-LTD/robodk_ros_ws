@@ -306,10 +306,18 @@
       </geometry>
       <material name="gripper_silver"/>
     </visual>
+    <!-- housing block (top of gripper, above the jaws) -->
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0 0 0.0125"/>
       <geometry>
-        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/collision/base_link.stl" scale="0.001 0.001 0.001"/>
+        <box size="0.066 0.099 0.025"/>
+      </geometry>
+    </collision>
+    <!-- fixed jaw (thin wall on +Y side, extending down) -->
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.047 -0.047"/>
+      <geometry>
+        <box size="0.068 0.006 0.094"/>
       </geometry>
     </collision>
   </link>
@@ -326,10 +334,11 @@
       </geometry>
       <material name="gripper_silver"/>
     </visual>
+    <!-- moving jaw modeled as a thin plate so gripping volume is open -->
     <collision>
-      <origin rpy="0 0 0" xyz="-0.0 0.048542 0.005"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.0445"/>
       <geometry>
-        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/collision/gripper_1.stl" scale="0.001 0.001 0.001"/>
+        <box size="0.068 0.005 0.089"/>
       </geometry>
     </collision>
   </link>
