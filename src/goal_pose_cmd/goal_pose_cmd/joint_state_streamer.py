@@ -19,6 +19,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+from std_msgs.msg import Float64
 
 from robodk.robolink import Robolink, ITEM_TYPE_ROBOT
 
@@ -35,6 +36,9 @@ class JointStateStreamer(Node):
             'joint_1,joint_2,joint_3,joint_4,joint_5,joint_6'
         )
         self.declare_parameter('joint_signs', '1,1,1,1,1,1')
+        self.declare_parameter('gripper_joint_name', 'gripper_slider')
+        self.declare_parameter('gripper_command_topic', '/gripper_command')
+        self.declare_parameter('gripper_initial_value', -25.0)
 
         rate = self.get_parameter('publish_rate').get_parameter_value().double_value
         topic = self.get_parameter('topic').get_parameter_value().string_value
@@ -42,6 +46,16 @@ class JointStateStreamer(Node):
         signs_str = self.get_parameter('joint_signs').get_parameter_value().string_value
         self.joint_names = [n.strip() for n in names_str.split(',')]
         self.joint_signs = [float(s.strip()) for s in signs_str.split(',')]
+
+        self.gripper_joint_name = (
+            self.get_parameter('gripper_joint_name').get_parameter_value().string_value.strip()
+        )
+        gripper_cmd_topic = (
+            self.get_parameter('gripper_command_topic').get_parameter_value().string_value
+        )
+        self.gripper_value = (
+            self.get_parameter('gripper_initial_value').get_parameter_value().double_value
+        )
 
         # --- RoboDK connection ---
         self.get_logger().info('Connecting to RoboDK...')
@@ -72,13 +86,30 @@ class JointStateStreamer(Node):
         # --- Publisher ---
         self.pub = self.create_publisher(JointState, topic, 10)
 
+        # --- Gripper command subscription ---
+        if self.gripper_joint_name:
+            self.create_subscription(
+                Float64, gripper_cmd_topic, self._gripper_cb, 10
+            )
+
         # --- Timer ---
         self.create_timer(1.0 / rate, self._publish)
 
+        published_joints = list(self.joint_names)
+        if self.gripper_joint_name:
+            published_joints.append(self.gripper_joint_name)
         self.get_logger().info(
             f'Publishing joint states on "{topic}" at {rate} Hz '
-            f'| joints: {self.joint_names}'
+            f'| joints: {published_joints}'
         )
+        if self.gripper_joint_name:
+            self.get_logger().info(
+                f'Listening for gripper commands on "{gripper_cmd_topic}" '
+                f'(initial value {self.gripper_value})'
+            )
+
+    def _gripper_cb(self, msg: Float64):
+        self.gripper_value = float(msg.data)
 
     def _publish(self):
         try:
@@ -91,13 +122,20 @@ class JointStateStreamer(Node):
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = ''
-        msg.name = self.joint_names
         # RoboDK stores angles in degrees; ROS uses radians.
         # Apply per-joint sign correction for axis direction mismatches.
-        msg.position = [
+        positions = [
             s * math.radians(j)
             for j, s in zip(joints_deg, self.joint_signs)
         ]
+        names = list(self.joint_names)
+
+        if self.gripper_joint_name:
+            names.append(self.gripper_joint_name)
+            positions.append(self.gripper_value)
+
+        msg.name = names
+        msg.position = positions
 
         self.pub.publish(msg)
 
