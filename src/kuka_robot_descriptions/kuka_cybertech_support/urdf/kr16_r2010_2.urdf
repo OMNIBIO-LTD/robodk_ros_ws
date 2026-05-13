@@ -284,4 +284,66 @@
     <child link="base_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+  <!-- gripper end effector -->
+  <material name="gripper_silver">
+    <color rgba="0.700 0.700 0.700 1.000"/>
+  </material>
+  <joint name="gripper_mount" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="flange"/>
+    <child link="gripper_base_link"/>
+  </joint>
+  <link name="gripper_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0011702561252768843 0.026454745356582574 -0.013981216174508405"/>
+      <mass value="0.6392407018829523"/>
+      <inertia ixx="0.001069" ixy="5e-06" ixz="-1.1e-05" iyy="0.000811" iyz="0.000241" izz="0.00063"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/visual/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="gripper_silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/collision/base_link.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="gripper_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0 4.491218433752553e-07 -0.04450000000000001"/>
+      <mass value="0.24148895332843123"/>
+      <inertia ixx="0.00016" ixy="0.0" ixz="0.0" iyy="0.000252" iyz="0.0" izz="9.4e-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.0 0.048542 0.005"/>
+      <geometry>
+        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/visual/gripper_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="gripper_silver"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.0 0.048542 0.005"/>
+      <geometry>
+        <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/collision/gripper_1.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="gripper_slider" type="prismatic">
+    <origin rpy="0 0 0" xyz="0.0 -0.048542 -0.005"/>
+    <parent link="gripper_base_link"/>
+    <child link="gripper_1"/>
+    <axis xyz="0.0 1.0 0.0"/>
+    <limit effort="100" lower="0.0" upper="0.09" velocity="100"/>
+  </joint>
+  <link name="gripper_tcp"/>
+  <joint name="gripper_tcp_joint" type="fixed">
+    <parent link="gripper_base_link"/>
+    <child link="gripper_tcp"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.1"/>
+  </joint>
 </robot>
