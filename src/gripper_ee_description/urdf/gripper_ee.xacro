@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<robot name="gripper_ee" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find gripper_ee_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find gripper_ee_description)/urdf/gripper_ee.trans" />
+<xacro:include filename="$(find gripper_ee_description)/urdf/gripper_ee.gazebo" />
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.0011702561252768843 0.026454745356582574 -0.013981216174508405" rpy="0 0 0"/>
+    <mass value="0.6392407018829523"/>
+    <inertia ixx="0.001069" iyy="0.000811" izz="0.00063" ixy="5e-06" iyz="0.000241" ixz="-1.1e-05"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find gripper_ee_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find gripper_ee_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="gripper_1">
+  <inertial>
+    <origin xyz="0.0 4.491218433752553e-07 -0.04450000000000001" rpy="0 0 0"/>
+    <mass value="0.24148895332843123"/>
+    <inertia ixx="0.00016" iyy="0.000252" izz="9.4e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.048542 0.005" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find gripper_ee_description)/meshes/gripper_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.0 0.048542 0.005" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find gripper_ee_description)/meshes/gripper_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="Slider 1" type="prismatic">
+  <origin xyz="0.0 -0.048542 -0.005" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="gripper_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+  <limit upper="0.09" lower="0.0" effort="100" velocity="100"/>
+</joint>
+
+</robot>
