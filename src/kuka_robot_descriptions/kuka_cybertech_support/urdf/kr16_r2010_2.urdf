@@ -289,7 +289,7 @@
     <color rgba="0.700 0.700 0.700 1.000"/>
   </material>
   <joint name="gripper_mount" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <origin rpy="0 -1.5707963267948966 0" xyz="0 0 0"/>
     <parent link="flange"/>
     <child link="gripper_base_link"/>
   </joint>
