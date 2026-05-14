@@ -8,7 +8,12 @@ colcon build
 source install/setup.bash
 ```
 
-**Usage Instructions:**
+## Usage Instructions:
+
+### Open Scene in IsaacSim:
+```bash
+src/usd_scenes/stackpro_democell.usd
+```
 
 - **Send goal to end-effector pose:**
 	```bash
