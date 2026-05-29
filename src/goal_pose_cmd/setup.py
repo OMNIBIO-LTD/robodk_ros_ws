@@ -29,6 +29,7 @@ setup(
             'joint_state_streamer    = goal_pose_cmd.joint_state_streamer:main',
             'gripper_button          = goal_pose_cmd.gripper_button:main',
             'gripper_pub             = goal_pose_cmd.gripper_pub:main',
+            'setup_station           = goal_pose_cmd.setup_station:main',
         ],
     },
 )

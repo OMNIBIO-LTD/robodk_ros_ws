@@ -39,21 +39,27 @@ class RoboDKGoalSubscriber(Node):
     def __init__(self):
         super().__init__('robodk_goal_subscriber')
 
-        # --- RoboDK setup (mirrors your reference script) ---
-        self.get_logger().info('Connecting to RoboDK...')
-        self.RDK = Robolink()
+        self.declare_parameter('robodk_host', 'localhost')
+        self.declare_parameter('robodk_port', 20500)
+        rdk_host = self.get_parameter('robodk_host').value
+        rdk_port = self.get_parameter('robodk_port').value
 
-        # Select a robot
-        self.robot = self.RDK.ItemUserPick('Select a robot', ITEM_TYPE_ROBOT)
-        if not self.robot.Valid():
-            self.get_logger().fatal('No robot selected or available')
-            raise RuntimeError('No robot selected or available')
+        self.get_logger().info(f'Connecting to RoboDK at {rdk_host}:{rdk_port} ...')
+        self.RDK = Robolink(robodk_ip=rdk_host, port=rdk_port)
 
-        # Get the reference frame
+        robots = self.RDK.ItemList(ITEM_TYPE_ROBOT)
+        if not robots:
+            self.get_logger().fatal('No robot found in RoboDK station')
+            raise RuntimeError('No robot found in RoboDK station')
+        self.robot = robots[0]
+        self.get_logger().info(f'Auto-selected robot: {self.robot.Name()}')
+
+        # Get the reference frame — auto-create World frame if none set
         self.reference_frame = self.robot.getLink(ITEM_TYPE_FRAME)
         if not self.reference_frame.Valid():
-            self.get_logger().fatal('Robot has no valid reference frame')
-            raise RuntimeError('Robot has no valid reference frame')
+            self.get_logger().warning('No reference frame found — creating World frame')
+            self.reference_frame = self.RDK.AddFrame('World')
+            self.robot.setPoseFrame(self.reference_frame)
 
         # Configure robot defaults
         self.robot.setPoseFrame(self.reference_frame)
