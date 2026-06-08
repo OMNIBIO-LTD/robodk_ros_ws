@@ -27,6 +27,7 @@ setup(
             'goal_pose_cmd_node      = goal_pose_cmd.goal_pose_cmd_node:main',
             'read_tcp_pose_node      = goal_pose_cmd.read_tcp_pose:main',
             'joint_state_streamer    = goal_pose_cmd.joint_state_streamer:main',
+            'ur_joint_state_streamer = goal_pose_cmd.ur_joint_state_streamer:main',
             'gripper_button          = goal_pose_cmd.gripper_button:main',
             'gripper_pub             = goal_pose_cmd.gripper_pub:main',
             'setup_station           = goal_pose_cmd.setup_station:main',
