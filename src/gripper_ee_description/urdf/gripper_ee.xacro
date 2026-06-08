@@ -6,9 +6,9 @@
 <xacro:include filename="$(find gripper_ee_description)/urdf/gripper_ee.gazebo" />
 <link name="base_link">
   <inertial>
-    <origin xyz="0.0011702561252768843 0.026454745356582574 -0.013981216174508405" rpy="0 0 0"/>
-    <mass value="0.6392407018829523"/>
-    <inertia ixx="0.001069" iyy="0.000811" izz="0.00063" ixy="5e-06" iyz="0.000241" ixz="-1.1e-05"/>
+    <origin xyz="-0.004489232637892108 -0.018469561788532624 -0.10694364852352554" rpy="0 0 0"/>
+    <mass value="17.259498950839642"/>
+    <inertia ixx="0.259724" iyy="0.197155" izz="0.153142" ixy="0.001156" iyz="0.058493" ixz="-0.00277"/>
   </inertial>
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -27,31 +27,31 @@
 
 <link name="gripper_1">
   <inertial>
-    <origin xyz="0.0 4.491218433752553e-07 -0.04450000000000001" rpy="0 0 0"/>
-    <mass value="0.24148895332843123"/>
-    <inertia ixx="0.00016" iyy="0.000252" izz="9.4e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+    <origin xyz="-1.0132789659417218e-09 -4.5049275015918155e-07 -0.13350000000000006" rpy="0 0 0"/>
+    <mass value="6.5202017398676455"/>
+    <inertia ixx="0.038861" iyy="0.061347" izz="0.022738" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
-    <origin xyz="-0.0 0.048542 0.005" rpy="0 0 0"/>
+    <origin xyz="0.008 0.243458 0.08" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find gripper_ee_description)/meshes/gripper_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
   <collision>
-    <origin xyz="-0.0 0.048542 0.005" rpy="0 0 0"/>
+    <origin xyz="0.008 0.243458 0.08" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find gripper_ee_description)/meshes/gripper_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
 </link>
 
-<joint name="Slider 1" type="prismatic">
-  <origin xyz="0.0 -0.048542 -0.005" rpy="0 0 0"/>
+<joint name="Slider 2" type="prismatic">
+  <origin xyz="-0.008 -0.243458 -0.08" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="gripper_1"/>
   <axis xyz="0.0 1.0 0.0"/>
-  <limit upper="0.09" lower="0.0" effort="100" velocity="100"/>
+  <limit upper="0.25" lower="0.0" effort="100" velocity="100"/>
 </joint>
 
 </robot>
