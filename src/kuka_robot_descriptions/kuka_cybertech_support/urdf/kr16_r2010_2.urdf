@@ -295,9 +295,9 @@
   </joint>
   <link name="gripper_base_link">
     <inertial>
-      <origin rpy="0 0 0" xyz="0.0011702561252768843 0.026454745356582574 -0.013981216174508405"/>
-      <mass value="0.6392407018829523"/>
-      <inertia ixx="0.001069" ixy="5e-06" ixz="-1.1e-05" iyy="0.000811" iyz="0.000241" izz="0.00063"/>
+      <origin rpy="0 0 0" xyz="-0.004489232637892108 -0.018469561788532624 -0.10694364852352554"/>
+      <mass value="17.259498950839642"/>
+      <inertia ixx="0.259724" ixy="0.001156" ixz="-0.00277" iyy="0.197155" iyz="0.058493" izz="0.153142"/>
     </inertial>
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -306,29 +306,29 @@
       </geometry>
       <material name="gripper_silver"/>
     </visual>
-    <!-- housing block (top of gripper, above the jaws) -->
+    <!-- main body (housing + actuator block, above the jaws) -->
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.0125"/>
+      <origin rpy="0 0 0" xyz="-0.0065 -0.0965 -0.035"/>
       <geometry>
-        <box size="0.066 0.099 0.025"/>
+        <box size="0.198 0.297 0.120"/>
       </geometry>
     </collision>
-    <!-- fixed jaw (thin wall on +Y side, extending down) -->
+    <!-- fixed jaw (thin bar on +Y side, extending down) -->
     <collision>
-      <origin rpy="0 0 0" xyz="0 0.047 -0.047"/>
+      <origin rpy="0 0 0" xyz="-0.007 0.0445 -0.244"/>
       <geometry>
-        <box size="0.068 0.006 0.094"/>
+        <box size="0.198 0.015 0.207"/>
       </geometry>
     </collision>
   </link>
   <link name="gripper_1">
     <inertial>
-      <origin rpy="0 0 0" xyz="0.0 4.491218433752553e-07 -0.04450000000000001"/>
-      <mass value="0.24148895332843123"/>
-      <inertia ixx="0.00016" ixy="0.0" ixz="0.0" iyy="0.000252" iyz="0.0" izz="9.4e-05"/>
+      <origin rpy="0 0 0" xyz="-1.0132789659417218e-09 -4.5049275015918155e-07 -0.13350000000000006"/>
+      <mass value="6.5202017398676455"/>
+      <inertia ixx="0.038861" ixy="0.0" ixz="0.0" iyy="0.061347" iyz="0.0" izz="0.022738"/>
     </inertial>
     <visual>
-      <origin rpy="0 0 0" xyz="-0.0 0.048542 0.005"/>
+      <origin rpy="0 0 0" xyz="0.008 0.243458 0.08"/>
       <geometry>
         <mesh filename="package://kuka_cybertech_support/meshes/gripper_ee/visual/gripper_1.stl" scale="0.001 0.001 0.001"/>
       </geometry>
@@ -336,24 +336,24 @@
     </visual>
     <!-- moving jaw modeled as a thin plate so gripping volume is open -->
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 -0.0445"/>
+      <origin rpy="0 0 0" xyz="0 0 -0.1335"/>
       <geometry>
-        <box size="0.068 0.005 0.089"/>
+        <box size="0.204 0.015 0.267"/>
       </geometry>
     </collision>
   </link>
   <joint name="gripper_slider" type="prismatic">
-    <origin rpy="0 0 0" xyz="0.0 -0.048542 -0.005"/>
+    <origin rpy="0 0 0" xyz="-0.008 -0.243458 -0.08"/>
     <parent link="gripper_base_link"/>
     <child link="gripper_1"/>
     <axis xyz="0.0 1.0 0.0"/>
-    <limit effort="2000" lower="0.0" upper="0.09" velocity="0.2"/>
+    <limit effort="3000" lower="0.0" upper="0.25" velocity="0.5"/>
     <dynamics damping="500.0" friction="200.0"/>
   </joint>
   <link name="gripper_tcp"/>
   <joint name="gripper_tcp_joint" type="fixed">
     <parent link="gripper_base_link"/>
     <child link="gripper_tcp"/>
-    <origin rpy="0 0 0" xyz="0.0 0.0 0.1"/>
+    <origin rpy="0 0 0" xyz="0.0 0.0 -0.347"/>
   </joint>
 </robot>
