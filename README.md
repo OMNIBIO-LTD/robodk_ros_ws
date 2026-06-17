@@ -257,6 +257,96 @@ python3 /home/qasob/robodk_ros_ws/src/goal_pose_cmd/goal_pose_cmd/setup_station.
 | `/get_tcp_pose`    | `std_msgs/Empty`            | external → ROS  | sub: `read_tcp_pose_node` |
 | `/joint_states`    | `sensor_msgs/JointState`    | ROS → external  | pub: `joint_state_streamer` / `ur_joint_state_streamer` |
 | `/gripper_command` | `std_msgs/Float64`          | external → ROS  | sub: `joint_state_streamer`, pub: `gripper_button` / `gripper_pub` |
+| `/camera_info`     | `sensor_msgs/CameraInfo`    | environment → ROS | pub: environment camera |
+| `/depth_h5c`       | `sensor_msgs/Image`         | environment → ROS | pub: environment camera (depth) |
+| `/rgb_h5c`         | `sensor_msgs/Image`         | environment → ROS | pub: environment camera (RGB) |
+
+### Environment / sensor topics
+
+These topics are published by the environment (the camera in the cell) — the
+ROS nodes in this package consume them, they are not produced here.
+
+```text
+$ ros2 topic info /camera_info
+Type: sensor_msgs/msg/CameraInfo
+Publisher count: 1
+Subscription count: 0
+
+$ ros2 topic info /depth_h5c
+Type: sensor_msgs/msg/Image
+Publisher count: 1
+Subscription count: 0
+
+$ ros2 topic info /rgb_h5c
+Type: sensor_msgs/msg/Image
+Publisher count: 1
+Subscription count: 0
+```
+
+**Inspect them** (use `--no-arr` on the image topics so the multi-MB pixel
+buffer isn't dumped to the terminal):
+```bash
+ros2 topic echo --once /camera_info
+ros2 topic echo --once --no-arr /rgb_h5c
+ros2 topic echo --once --no-arr /depth_h5c
+```
+
+**Example `/camera_info` (`sensor_msgs/CameraInfo`) message:**
+```yaml
+header:
+  stamp:
+    sec: 248
+    nanosec: 483346292
+  frame_id: sim_camera
+height: 720
+width: 1280
+distortion_model: plumb_bob
+d: [0.0, 0.0, 0.0, 0.0, 0.0]
+k: [3814.06420626281,              0.0,  640.0,
+                  0.0, 2545.968820785783,  360.0,
+                  0.0,              0.0,    1.0]
+r: [1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0]
+p: [3814.06420626281,              0.0,  640.0, 0.0,
+                  0.0, 2545.968820785783,  360.0, 0.0,
+                  0.0,              0.0,    1.0, 0.0]
+binning_x: 0
+binning_y: 0
+roi: {x_offset: 0, y_offset: 0, height: 0, width: 0, do_rectify: false}
+```
+
+**Example `/rgb_h5c` (`sensor_msgs/Image`) message** (shown with `--no-arr`, the
+2,764,800-byte `data` array elided):
+```yaml
+header:
+  stamp:
+    sec: 252
+    nanosec: 166679818
+  frame_id: sim_camera
+height: 720
+width: 1280
+encoding: rgb8
+is_bigendian: 0
+step: 3840                       # width * 3 bytes/pixel
+data: '<sequence type: uint8, length: 2764800>'
+```
+
+**Example `/depth_h5c` (`sensor_msgs/Image`) message** (shown with `--no-arr`, the
+3,686,400-byte `data` array elided):
+```yaml
+header:
+  stamp:
+    sec: 254
+    nanosec: 916679961
+  frame_id: sim_camera
+height: 720
+width: 1280
+encoding: 32FC1                  # 32-bit float depth, meters
+is_bigendian: 0
+step: 5120                       # width * 4 bytes/pixel
+data: '<sequence type: uint8, length: 3686400>'
+```
 
 ### Gripper values
 
