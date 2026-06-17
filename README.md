@@ -371,6 +371,47 @@ ros2 topic pub --once /gripper_command std_msgs/Float64 '{data:  25.0}'
 
 ---
 
+## Services
+
+### `/move_conveyor` — start / stop the conveyor
+
+A `std_srvs/srv/SetBool` service that toggles the conveyor: `data: true` runs
+it, `data: false` stops it. The response uses the standard `SetBool` reply
+(`success` + an optional `message`).
+
+| | |
+|--|--|
+| Service | `/move_conveyor` |
+| Type | `std_srvs/srv/SetBool` |
+| Request | `bool data` — `true` = run, `false` = stop |
+| Response | `bool success`, `string message` |
+
+**Discover it:**
+```bash
+ros2 service list
+# /move_conveyor
+ros2 service type /move_conveyor
+# std_srvs/srv/SetBool
+```
+
+**Call it:**
+```bash
+# stop the conveyor
+ros2 service call /move_conveyor std_srvs/srv/SetBool "{data: false}"
+# start the conveyor
+ros2 service call /move_conveyor std_srvs/srv/SetBool "{data: true}"
+```
+
+**Example response:**
+```text
+requester: making request: std_srvs.srv.SetBool_Request(data=False)
+
+response:
+std_srvs.srv.SetBool_Response(success=True, message='')
+```
+
+---
+
 ## Typical session (KUKA + Isaac Sim)
 
 In four terminals, after `source install/setup.bash`:
