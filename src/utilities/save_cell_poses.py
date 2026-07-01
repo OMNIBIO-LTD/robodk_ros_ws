@@ -9,12 +9,12 @@ Pallet initial pose (bottom-left corner):
     y_init = 0.5959041137695313
 
 Pallet dimensions:
-    length (L) = 1.2   # along x-axis
-    width  (W) = 1.0   # along y-axis
+    width  (W) = 1.0   # spans the +x-axis
+    length (L) = 1.2   # spans the -y-axis (length grows in negative y)
 
 Grid:
-    n = 5 rows (along width/y)
-    m = 5 columns (along length/x)
+    n = 5 rows    (along the length / -y)
+    m = 5 columns (along the width  / +x)
 
 Default z / orientation (applied to every cell):
     z: 1.497
@@ -42,29 +42,34 @@ def compute_cell_centers(L, W, n, m, x_init=0.0, y_init=0.0):
     """
     Divide a pallet into an n x m grid of cells and compute each cell's center.
 
+    Axis convention:
+        width  (W) spans the +x-axis and is divided into m columns.
+        length (L) spans the -y-axis and is divided into n rows,
+        i.e. rows advance in the negative-y direction from y_init.
+
     Parameters
     ----------
-    L : float        # pallet length (along x-axis, spans the columns)
-    W : float        # pallet width (along y-axis, spans the rows)
-    n : int          # number of rows (along W/y)
-    m : int          # number of columns (along L/x)
-    x_init : float   # x-coordinate of pallet's bottom-left corner
-    y_init : float   # y-coordinate of pallet's bottom-left corner
+    L : float        # pallet length (spans -y-axis, divided across the rows)
+    W : float        # pallet width  (spans +x-axis, divided across the columns)
+    n : int          # number of rows (along L/-y)
+    m : int          # number of columns (along W/+x)
+    x_init : float   # x-coordinate of pallet's start corner
+    y_init : float   # y-coordinate of pallet's start corner
 
     Returns
     -------
     dict[(int, int), (float, float)]
-        Keys are (row, col), 1-indexed, row=1 is bottom row, col=1 is
-        leftmost column. Values are (center_x, center_y) of that cell.
+        Keys are (row, col), 1-indexed. col=1 is nearest x_init (grows +x);
+        row=1 is nearest y_init (grows -y). Values are (center_x, center_y).
     """
-    cell_width = L / m
-    cell_height = W / n
+    cell_width = W / m        # cell size along +x (pallet width)
+    cell_length = L / n       # cell size along -y (pallet length)
 
     centers = {}
     for row in range(n):
         for col in range(m):
             cx = x_init + col * cell_width + cell_width / 2
-            cy = y_init + row * cell_height + cell_height / 2
+            cy = y_init - (row * cell_length + cell_length / 2)
             centers[(row + 1, col + 1)] = (cx, cy)
 
     return centers
