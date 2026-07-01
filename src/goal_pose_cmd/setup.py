@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'goal_pose_cmd_node      = goal_pose_cmd.goal_pose_cmd_node:main',
+            'traverse_cells_node     = goal_pose_cmd.traverse_cells_node:main',
             'read_tcp_pose_node      = goal_pose_cmd.read_tcp_pose:main',
             'joint_state_streamer    = goal_pose_cmd.joint_state_streamer:main',
             'ur_joint_state_streamer = goal_pose_cmd.ur_joint_state_streamer:main',
