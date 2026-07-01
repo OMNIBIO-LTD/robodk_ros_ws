@@ -138,8 +138,8 @@ def iterate_poses(poses):
 
 def main():
     # --- Pallet initial pose ---
-    x_init = 0.8
-    y_init = 0.5
+    x_init = 0.7
+    y_init = 0.4
 
     # --- Pallet dimensions ---
     L = 1.2   # length
