@@ -143,7 +143,7 @@ def main():
 
     # --- Pallet dimensions ---
     L = 1.2   # length
-    W = 1.0   # width
+    W = 0.8   # width
 
     # --- Grid size ---
     n = 5     # rows
