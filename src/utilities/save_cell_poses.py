@@ -31,10 +31,10 @@ import json
 # --- Default z and orientation applied to every cell pose ---
 DEFAULT_Z = 1.28
 DEFAULT_ORIENTATION = {
-    "x": -5.0,
+    "x": -6.123233995736766e-17,
     "y": 1.0,
-    "z": 7.27,
-    "w": -2.74,
+    "z": 6.123233995736766e-17,
+    "w": 3.749399456654644e-33,
 }
 
 
