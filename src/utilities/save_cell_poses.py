@@ -138,12 +138,12 @@ def iterate_poses(poses):
 
 def main():
     # --- Pallet initial pose ---
-    x_init = 0.9278964843749999
-    y_init = 0.5959041137695313
+    x_init = 0.8
+    y_init = 0.5
 
     # --- Pallet dimensions ---
     L = 1.2   # length
-    W = 0.8   # width
+    W = 1.0   # width
 
     # --- Grid size ---
     n = 5     # rows
